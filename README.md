@@ -1,2 +1,1 @@
-# m347
-M347 Projekt 
+# wordpress-docker-compose
