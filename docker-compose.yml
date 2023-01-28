@@ -1,7 +1,7 @@
 version: "3.9"
+
 services: 
-
-
+  #wordpress db configuration
   wordpress_db:
     image: mariadb:10.6.4-focal
     command: '--default-authentication-plugin=mysql_native_password'
@@ -17,6 +17,7 @@ services:
       - 3306
       - 33060
       
+  #wordpress configuration
   wordpress:
     image: wordpress:latest
     ports:
@@ -47,23 +48,25 @@ services:
     image: mediawiki
     restart: always
     ports:
-      - 8080:80
+      - 8001:80
     links:
       - db_mediawiki
     volumes:
       - images:/var/www/html/images
+      - ./LocalSettings.php:/var/www/html/LocalSettings.php
 
 #mediawiki db configuration
   db_mediawiki:
     image: mariadb:10
     restart: always
     environment:
-      MYSQL_DATABASE: my_wiki
-      MYSQL_USER: wikiuser
-      MYSQL_PASSWORD: example
-      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+      MYSQL_DATABASE: mediawiki_db
+      MYSQL_USER: student
+      MYSQL_PASSWORD: student
+      MYSQL_ROOT_PASSWORD: root
     volumes:
-      - media_db:/var/lib/mysql
+      - /var/lib/mysql
+      - ./db/mediawiki_init.sql:/docker-entrypoint-initdb.d/init.sql
 
 #filebrowser configuration
   filebrowser:
@@ -94,5 +97,4 @@ services:
 volumes: 
   wp_files:
   images:
-  media_db:
   db_data:
