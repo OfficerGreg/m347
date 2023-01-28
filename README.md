@@ -1,1 +1,1 @@
-# wordpress-docker-compose
+# wordpress-wikimedia-filebrowser-nginx-docker-compose
