@@ -38,7 +38,7 @@ services:
     depends_on: 
       - wordpress
     ports:
-      - 8085:80
+      - ${NGINX_LOCAL}:${NGINX_DOCKER}
     volumes:
       - ./conf.d:/etc/nginx/conf.d
       - wp_files:/var/www/html
