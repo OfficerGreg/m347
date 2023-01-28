@@ -7,9 +7,10 @@ docker compose consisting of config for wordpress with nginx, filebrowser and me
 
 
 
+
 ## Installation
 
-To install this project make sure that docker is downloaded:
+To install this project make sure that docker is downloaded or download it through this link:
 
 https://www.docker.com/products/docker-desktop/
     
