@@ -55,10 +55,10 @@ $wgEmailAuthentication = true;
 
 ## Database settings
 $wgDBtype = "mysql";
-$wgDBserver = "db_mediawiki:3306";
-$wgDBname = "wiki_db";
-$wgDBuser = "m347_user";
-$wgDBpassword = "m347_user";
+$wgDBserver = "mediawiki_db:3306";
+$wgDBname = "mw_db";
+$wgDBuser = "student";
+$wgDBpassword = "student";
 
 # MySQL specific settings
 $wgDBprefix = "wk";

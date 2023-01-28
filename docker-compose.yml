@@ -9,10 +9,10 @@ services:
       - db_data:/var/lib/mysql
     restart: always
     environment:
-      - MYSQL_ROOT_PASSWORD=rootstudent
-      - MYSQL_DATABASE=student
-      - MYSQL_USER=student
-      - MYSQL_PASSWORD=student
+      MYSQL_DATABASE: ${WP_DB_NAME}
+      MYSQL_USER: ${WP_DB_USER}
+      MYSQL_PASSWORD: ${WP_DB_PWD}
+      MYSQL_ROOT_PASSWORD: ${WP_DB_ROOT_PWD}
     expose:
       - 3306
       - 33060
@@ -24,10 +24,10 @@ services:
       - 80
     restart: always
     environment:
-      - WORDPRESS_DB_HOST=wordpress_db
-      - WORDPRESS_DB_USER=student
-      - WORDPRESS_DB_PASSWORD=student
-      - WORDPRESS_DB_NAME=student
+      WORDPRESS_DB_HOST: ${WP_HOST}
+      WORDPRESS_DB_USER: ${WP_NAME}
+      WORDPRESS_DB_PASSWORD: ${WP_USER}
+      WORDPRESS_DB_NAME: ${WP_PWD}
     volumes:
       - wp_files:/var/www/html
 
@@ -48,22 +48,22 @@ services:
     image: mediawiki
     restart: always
     ports:
-      - 8001:80
+      - ${MW_LOCAL}:${MW_DOCKER}
     links:
-      - db_mediawiki
+      - mediawiki_db
     volumes:
       - images:/var/www/html/images
       - ./LocalSettings.php:/var/www/html/LocalSettings.php
 
 #mediawiki db configuration
-  db_mediawiki:
+  mediawiki_db:
     image: mariadb:10
     restart: always
     environment:
-      MYSQL_DATABASE: mediawiki_db
-      MYSQL_USER: student
-      MYSQL_PASSWORD: student
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ${MW_DB_NAME}
+      MYSQL_USER: ${MW_DB_USER}
+      MYSQL_PASSWORD: ${MW_DB_PWD}
+      MYSQL_ROOT_PASSWORD: ${MW_DB_ROOT_PWD}
     volumes:
       - /var/lib/mysql
       - ./db/mediawiki_init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -74,7 +74,7 @@ services:
     restart: always
     user: "1000:1000"
     ports:
-      - 8188:8080
+      - ${FB_LOCAL}:${FB_DOCKER}
     volumes:
       - /:/data
       - ./config:/config
@@ -91,7 +91,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./portainer-data:/data
     ports:
-      - 9000:9000
+      - ${PT_LOCAL}:${PT_DOCKER}
 
 #volumes
 volumes: 
