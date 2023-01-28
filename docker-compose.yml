@@ -1,26 +1,39 @@
-version: "3.7"
+version: "3.9"
 services: 
-#Ddatabase wordpress configuration
-  db_wordpress:
-    image: mariadb:10
+
+
+  db:
+    # We use a mariadb image which supports both amd64 & arm64 architecture
+    image: mariadb:10.6.4-focal
+    # If you really want to use MySQL, uncomment the following line
+    #image: mysql:8.0.27
+    command: '--default-authentication-plugin=mysql_native_password'
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
     environment:
-      MYSQL_DATABASE: "${MYSQL_DATABASE}"
-      MYSQL_USER: "${MYSQL_USER}"
-      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
-      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
-#wordpress configuration
+      - MYSQL_ROOT_PASSWORD=somewordpress
+      - MYSQL_DATABASE=wordpress
+      - MYSQL_USER=wordpress
+      - MYSQL_PASSWORD=wordpress
+    expose:
+      - 3306
+      - 33060
+      
   wordpress:
-    image: wordpress:5-fpm-alpine
-    links:
-      - db_wordpress 
+    image: wordpress:latest
+    ports:
+      - 80
+    restart: always
+    environment:
+      - WORDPRESS_DB_HOST=db
+      - WORDPRESS_DB_USER=wordpress
+      - WORDPRESS_DB_PASSWORD=wordpress
+      - WORDPRESS_DB_NAME=wordpress
     volumes:
       - wp_files:/var/www/html
-    environment:
-      WORDPRESS_DB_HOST: "${WORDPRESS_DB_HOST}"
-      WORDPRESS_DB_NAME: "${WORDPRESS_DB_NAME}"
-      WORDPRESS_DB_USER: "${WORDPRESS_DB_USER}"
-      WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASSWORD}"
-#Nginx config
+
+#nginx configuration
   nginx:
     image: nginx:alpine
     container_name: nginx
@@ -31,7 +44,8 @@ services:
     volumes:
       - ./conf.d:/etc/nginx/conf.d
       - wp_files:/var/www/html
-#Mediawiki configuration
+
+#mediawiki configuration
   mediawiki:
     image: mediawiki
     restart: always
@@ -41,7 +55,8 @@ services:
       - db_mediawiki
     volumes:
       - images:/var/www/html/images
-#Database Mediawiki configuration
+
+#mediawiki db configuration
   db_mediawiki:
     image: mariadb:10
     restart: always
@@ -49,10 +64,11 @@ services:
       MYSQL_DATABASE: my_wiki
       MYSQL_USER: wikiuser
       MYSQL_PASSWORD: example
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
     volumes:
-      - db:/var/lib/mysql
-#Filebrowser configuration
+      - media_db:/var/lib/mysql
+
+#filebrowser configuration
   filebrowser:
     image: hurlenko/filebrowser
     restart: always
@@ -62,7 +78,8 @@ services:
     volumes:
       - /:/data
       - ./config:/config
-#Portainer
+
+#portainer configuration
   portainer:
     image: portainer/portainer-ce:latest
     container_name: portainer
@@ -75,7 +92,10 @@ services:
       - ./portainer-data:/data
     ports:
       - 9000:9000
+
+#volumes
 volumes: 
-  wp_files: 
+  wp_files:
   images:
-  db:
+  media_db:
+  db_data:
