@@ -1,6 +1,7 @@
 version: "3.9"
 
 services: 
+
   #wordpress db configuration
   wordpress_db:
     image: mariadb:10.6.4-focal
@@ -76,8 +77,7 @@ services:
     ports:
       - ${FB_LOCAL}:${FB_DOCKER}
     volumes:
-      - /:/data
-      - ./config:/config
+      - ./data:/data
 
 #portainer configuration
   portainer:
